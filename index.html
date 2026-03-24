@@ -29,39 +29,11 @@
 
     <div style="height:16px;"></div>
 
-    <button id="checkout-button" style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;">
-      Start abonnement
-    </button>
+    <a href="https://buy.stripe.com/test_fZu9AV9Xh9Ci5UFaOXabK00" style="text-decoration:none;">
+      <button style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;">
+        Start abonnement
+      </button>
+    </a>
   </div>
-
-  <script>
-    document.getElementById("checkout-button").onclick = async () => {
-      try {
-        const res = await fetch("https://ai-mail-assistant-production-979f.up.railway.app/billing/create-checkout-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (!res.ok) {
-          const text = await res.text();
-          alert("Checkout fout: " + text);
-          return;
-        }
-
-        const data = await res.json();
-
-        if (!data.url) {
-          alert("Geen checkout URL teruggekregen van backend.");
-          return;
-        }
-
-        window.location.href = data.url;
-      } catch (error) {
-        alert("Netwerkfout of CORS-probleem: " + error.message);
-      }
-    };
-  </script>
 </body>
 </html>
