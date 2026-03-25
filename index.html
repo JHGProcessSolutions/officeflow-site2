@@ -5,35 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OfficeFlow</title>
 </head>
+
 <body style="margin:0; font-family: Arial, sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; background:#ffffff;">
+  
   <div style="text-align:center;">
+
     <h1 style="margin-bottom:16px;">OfficeFlow</h1>
 
     <p style="margin-bottom:32px; font-size:18px;">
-      Verbind je Gmail-account om te starten
+      Start je abonnement om OfficeFlow te gebruiken
     </p>
 
-    <a href="https://ai-mail-assistant-production-979f.up.railway.app/auth/google/start" style="text-decoration:none;">
-      <button style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;">
-        Connect Gmail
-      </button>
-    </a>
+    <!-- Stripe knop -->
+    <button
+      id="checkout-button"
+      style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;"
+    >
+      Start abonnement
+    </button>
 
-    <div style="height:16px;"></div>
-
-    <a href="/success.html" style="text-decoration:none;">
-      <button style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;">
-        Success pagina
-      </button>
-    </a>
-
-    <div style="height:16px;"></div>
-
-    <a href="https://buy.stripe.com/test_fZu9AV9Xh9Ci5UFaOXabK00" style="text-decoration:none;">
-      <button style="padding:16px 32px; font-size:16px; cursor:pointer; border:1px solid #000; background:#fff;">
-        Start abonnement
-      </button>
-    </a>
   </div>
+
+  <script>
+    const button = document.getElementById("checkout-button");
+
+    button.onclick = async () => {
+      button.innerText = "Laden...";
+      button.disabled = true;
+
+      try {
+        const res = await fetch(
+          "https://ai-mail-assistant-production-979f.up.railway.app/billing/create-checkout-session",
+          {
+            method: "POST"
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Server gaf geen geldige response");
+        }
+
+        const data = await res.json();
+
+        if (!data.url) {
+          throw new Error("Geen checkout URL ontvangen");
+        }
+
+        // redirect naar Stripe
+        window.location.href = data.url;
+
+      } catch (err) {
+        alert("Er ging iets mis met het starten van de betaling.");
+        console.error(err);
+
+        button.innerText = "Start abonnement";
+        button.disabled = false;
+      }
+    };
+  </script>
+
 </body>
 </html>
